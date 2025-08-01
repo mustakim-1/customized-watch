@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aura Straps | M-Series Configurator</title>
+    <title>Aura Straps | M-Series Configurator (Fixed)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -62,8 +62,8 @@
         .display-panel {
             background-color: transparent;
             border: none;
-            padding: 0; /* Remove padding from this panel */
-            justify-content: center;
+            padding: 0;
+            /* BUG FIX: Removed justify-content: center; which caused the collapse */
         }
         #projection-field { width: 100%; flex-grow: 1; display: flex; align-items: center; justify-content: center; perspective: 1500px; position: relative; cursor: none; }
         #mouse-reticle { position: absolute; width: 40px; height: 40px; border: 1px solid var(--accent-blue); border-radius: 50%; transform: translate(-50%, -50%); pointer-events: none; transition: opacity 0.2s ease; opacity: 0; }
@@ -79,10 +79,10 @@
         .summary-item { padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); }
         .summary-item:last-child { border-bottom: none; }
         .summary-item h3 { font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 0.5rem; }
-        .summary-item p { font-size: 1.5rem; font-family: var(--text-monospace); color: var(--text-primary); }
-        #total-price-container { margin-bottom: 2rem; padding: 1rem; border-radius: 1rem; text-align: center; border: 1px solid var(--border-color); }
-        #total-price-container h2 { font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); letter-spacing: 0.1em; text-transform: uppercase; }
-        #summary-total { font-size: 2.5rem; font-weight: 700; font-family: var(--text-monospace); margin-top: 0.25rem; color: var(--accent-blue); transition: font-size 0.3s ease; }
+        .summary-item p { font-size: 1.5rem; color: var(--text-primary); }
+        #total-price-container, .total-price-container-mobile { padding: 1rem; border-radius: 1rem; text-align: center; border: 1px solid var(--border-color); }
+        #total-price-container h2, .total-price-container-mobile h2 { font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); letter-spacing: 0.1em; text-transform: uppercase; }
+        #summary-total, .summary-total-mobile { font-size: 2.5rem; font-weight: 700; font-family: var(--text-monospace); margin-top: 0.25rem; color: var(--accent-blue); transition: font-size 0.3s ease; }
         .control-group h3 { font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 1rem; }
         .custom-button { transition: all 0.2s ease; border: 1px solid var(--border-color); background-color: transparent; padding: 1rem; cursor: pointer; text-align: center; font-weight: 500; border-radius: 0.75rem; color: var(--text-primary); }
         .custom-button:hover { border-color: var(--accent-blue); color: var(--accent-blue); }
@@ -93,39 +93,34 @@
         #submit-btn { background: var(--accent-blue); color: white; font-weight: 700; border: none; }
         #submit-btn:hover { background-color: #0062CC; box-shadow: 0 0 25px var(--glow-accent); }
         #submit-btn:disabled { background: var(--text-secondary); color: var(--bg-charcoal); cursor: not-allowed; opacity: 0.7; box-shadow: none; }
-
+        
         #notification-overlay { position: fixed; inset: 0; background: rgba(17, 17, 21, 0.7); backdrop-filter: blur(10px); z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
         #notification-overlay.visible { opacity: 1; pointer-events: all; }
         #notification-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95); z-index: 1000; width: 90%; max-width: 500px; background-color: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 1rem; padding: 2.5rem; text-align: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.2, 1, 0.3, 1); }
         #notification-title { color: var(--text-primary); font-weight: 600; }
         #notification-message { color: var(--text-secondary); }
 
-        /* --- NEW: RESPONSIVE DESIGN FIXES --- */
+        .total-price-container-mobile { display: none; }
+
         @media (max-width: 1024px) {
-            body { overflow-y: auto; } /* Enable scrolling on smaller devices */
-            .configurator-container {
-                grid-template-columns: 1fr; /* Single column layout */
-                grid-template-rows: auto auto auto; /* Define rows for stacking */
-                height: auto;
-                min-height: 100vh;
-                padding: 1.5rem;
-                gap: 1.5rem;
-            }
+            body { overflow-y: auto; }
+            .configurator-container { grid-template-columns: 1fr; grid-template-rows: auto auto auto; height: auto; min-height: 100vh; padding: 1.5rem; gap: 1.5rem; }
             .panel { height: auto; max-height: none; }
             .summary-panel { order: 1; }
-            .display-panel { order: 2; height: auto; /* Allow height to be auto */ }
+            .display-panel { order: 2; height: auto; }
             .controls-panel { order: 3; }
-
             .display-panel {
-                padding-top: 1.5rem; /* Add padding back for mobile */
+                padding: 1.5rem;
                 background-color: var(--bg-panel);
                 border: 1px solid var(--border-color);
+                /* New properties to stack mobile content correctly */
+                justify-content: flex-start;
+                gap: 1.5rem;
             }
-            #projection-field {
-                aspect-ratio: 1 / 1; /* Give the display a consistent shape */
-                cursor: default; /* Use standard cursor on touch */
-            }
-            #mouse-reticle { display: none; } /* Hide the reticle on touch devices */
+            #projection-field { aspect-ratio: 1 / 1; cursor: default; flex-grow: 1; }
+            #mouse-reticle { display: none; }
+            #total-price-container { display: none; }
+            .total-price-container-mobile { display: block; width: 100%; }
         }
 
         @media (max-width: 768px) {
@@ -133,8 +128,8 @@
             .panel { padding: 1.5rem; border-radius: 1rem;}
             .panel-title { font-size: 0.9rem; margin-bottom: 1.5rem; }
             .summary-item p { font-size: 1.25rem; }
-            #total-price-container { padding: 1rem; margin-bottom: 1.5rem; }
-            #summary-total { font-size: 2.25rem; }
+            .total-price-container-mobile { padding: 1rem; }
+            #summary-total, .summary-total-mobile { font-size: 2.25rem; }
             .custom-button { padding: 0.8rem; font-size: 0.9rem; }
             #submit-btn { font-size: 1rem; }
             #notification-modal { padding: 1.5rem; }
@@ -145,7 +140,7 @@
     <canvas id="particle-canvas"></canvas>
 
     <div class="configurator-container">
-        <!-- Summary Panel (Left) - Text Updated -->
+        <!-- Summary Panel (Left) -->
         <div class="panel summary-panel animate-entry">
             <h2 class="panel-title">System Readout</h2>
             <div class="space-y-4 flex-grow">
@@ -164,17 +159,22 @@
                     </div>
                 </div>
             </div>
+            <!-- This container is for DESKTOP ONLY -->
             <div id="total-price-container">
                 <h2>Total Cost</h2>
-                <p class="summary-total" id="summary-total">$0.00</p>
+                <p id="summary-total" class="font-bold text-4xl">$0.00</p>
             </div>
         </div>
 
         <!-- Display Panel (Center) -->
         <div class="panel display-panel animate-entry">
+            <!-- This container is for MOBILE ONLY -->
+            <div class="total-price-container-mobile">
+                <h2>Total Cost</h2>
+                <p id="summary-total-mobile" class="font-bold text-4xl">$0.00</p>
+            </div>
             <div id="projection-field">
                 <div id="mouse-reticle"></div>
-                <!-- Images are the same, but alt tags are updated for accessibility -->
                 <img src="https://i.imgur.com/G3PAnvB.png" class="product-image" data-part="chassis" data-id="basic" alt="Basic Connectors">
                 <img src="https://i.imgur.com/w1sO86b.png" class="product-image" data-part="chassis" data-id="premium" alt="Premium Connectors">
                 <img src="https://i.imgur.com/gK9xG7I.png" class="product-image" data-part="strap" data-id="belt" alt="Belt Strap">
@@ -183,7 +183,7 @@
             </div>
         </div>
 
-        <!-- Controls Panel (Right) - Text Updated -->
+        <!-- Controls Panel (Right) -->
         <div class="panel controls-panel animate-entry">
             <div class="flex-grow flex flex-col justify-center">
                 <h2 class="panel-title">Configuration</h2>
@@ -215,9 +215,9 @@
     
     <div id="notification-overlay"> <div id="notification-modal"> <h2 id="notification-title" class="text-2xl font-bold mb-4"></h2> <p id="notification-message" class="mb-8"></p> <div id="notification-actions"></div> </div> </div>
     
-    <audio id="audio-select" src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_c359286d38.mp3" preload="auto"></audio>
-    <audio id="audio-confirm" src="https://cdn.pixabay.com/download/audio/2022/01/21/audio_ea3b2a8063.mp3" preload="auto"></audio>
-    <audio id="audio-error" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_74cbfdc833.mp3" preload="auto"></audio>
+    <audio id="audio-select" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c48545.mp3" preload="auto"></audio>
+    <audio id="audio-confirm" src="https://cdn.pixabay.com/download/audio/2022/01/18/audio_472b6a552a.mp3" preload="auto"></audio>
+    <audio id="audio-error" src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_a75386235b.mp3" preload="auto"></audio>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -233,6 +233,7 @@
             summaryTypePrice: document.getElementById('summary-type-price'),
             summaryStrapPrice: document.getElementById('summary-strap-price'),
             summaryTotal: document.getElementById('summary-total'),
+            summaryTotalMobile: document.getElementById('summary-total-mobile'),
             submitBtn: document.getElementById('submit-btn'),
             notification: { overlay: document.getElementById('notification-overlay'), modal: document.getElementById('notification-modal'), title: document.getElementById('notification-title'), message: document.getElementById('notification-message'), actions: document.getElementById('notification-actions') },
             audio: { select: document.getElementById('audio-select'), confirm: document.getElementById('audio-confirm'), error: document.getElementById('audio-error') }
@@ -252,26 +253,29 @@
         function animateParticles() { ctx.clearRect(0, 0, canvas.width, canvas.height); particles.forEach(p => p.update()); requestAnimationFrame(animateParticles); }
         initParticles(); animateParticles(); window.addEventListener('resize', () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; particles = []; initParticles(); });
         
-        let animationFrameId;
-        function animateCountUp(element, endValue) {
-            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        let animationFrameIdDesktop, animationFrameIdMobile;
+        function animateCountUp(element, endValue, frameIdRef) {
+            if (frameIdRef.id) cancelAnimationFrame(frameIdRef.id);
             const startValue = parseFloat(element.textContent.replace('$', '')) || 0;
             const duration = 700;
             let startTime = null;
-            if (startValue === endValue) return;
+            if (startValue === endValue) {
+                element.textContent = `$${endValue.toFixed(2)}`;
+                return;
+            }
             function step(timestamp) {
                 if (!startTime) startTime = timestamp;
                 const progress = Math.min((timestamp - startTime) / duration, 1);
                 const easedProgress = 1 - Math.pow(1 - progress, 3);
                 const currentValue = startValue + (endValue - startValue) * easedProgress;
                 element.textContent = `$${currentValue.toFixed(2)}`;
-                if (progress < 1) animationFrameId = requestAnimationFrame(step);
+                if (progress < 1) frameIdRef.id = requestAnimationFrame(step);
                 else element.textContent = `$${endValue.toFixed(2)}`;
             }
-            animationFrameId = requestAnimationFrame(step);
+            frameIdRef.id = requestAnimationFrame(step);
         }
 
-        function playSound(sound, volume = 0.8) { sound.currentTime = 0; sound.volume = volume; sound.play(); }
+        function playSound(sound, volume = 0.4) { sound.currentTime = 0; sound.volume = volume; sound.play(); }
 
         const resetState = () => {
             state = { chassis: null, chassisPrice: 0, strap: null, strapPrice: 0 };
@@ -283,14 +287,14 @@
             updateSummary();
         };
 
-        // --- CORE LOGIC (With Updated Text) ---
         function updateSummary() {
             dom.summaryType.textContent = state.chassis ? state.chassis.name : 'Not Selected';
             dom.summaryTypePrice.textContent = state.chassis ? `$${state.chassisPrice.toFixed(2)}` : '';
             dom.summaryStrap.textContent = state.chassis ? (state.strap ? state.strap.name : 'Pending...') : 'Requires Watch Type';
             dom.summaryStrapPrice.textContent = state.strap ? `$${state.strapPrice.toFixed(2)}` : '';
             const totalPrice = (state.chassisPrice || 0) + (state.strapPrice || 0);
-            animateCountUp(dom.summaryTotal, totalPrice);
+            animateCountUp(dom.summaryTotal, totalPrice, { id: animationFrameIdDesktop });
+            animateCountUp(dom.summaryTotalMobile, totalPrice, { id: animationFrameIdMobile });
         }
         
         function materializeImage(part, id) {
@@ -314,7 +318,7 @@
             button.addEventListener('click', () => {
                 const { id, name, price } = button.dataset;
                 if (state.chassis && state.chassis.id === id) return;
-                playSound(dom.audio.select, 0.4);
+                playSound(dom.audio.select);
                 state.chassis = { id, name, price: parseInt(price) };
                 state.chassisPrice = parseInt(price);
                 dom.chassisButtons.forEach(b => b.classList.remove('selected'));
@@ -330,10 +334,10 @@
 
         dom.strapButtons.forEach(button => {
             button.addEventListener('click', () => {
-                if (!state.chassis) { playSound(dom.audio.error, 0.5); return; }
+                if (!state.chassis) { playSound(dom.audio.error); return; }
                 const { id, name, price } = button.dataset;
                 if (state.strap && state.strap.id === id) return;
-                playSound(dom.audio.select, 0.6);
+                playSound(dom.audio.select);
                 state.strap = { id, name, price: parseInt(price) };
                 state.strapPrice = parseInt(price);
                 dom.strapButtons.forEach(b => b.classList.remove('selected'));
@@ -343,11 +347,10 @@
             });
         });
         
-        // --- UPDATED Final Confirmation Modal Text ---
         dom.submitBtn.addEventListener('click', () => {
             if (!state.chassis || !state.strap) {
                 showNotification('Incomplete Configuration', 'Please select both a watch type and a strap to finalize your build.');
-                playSound(dom.audio.error, 0.5);
+                playSound(dom.audio.error);
                 return;
             }
             
